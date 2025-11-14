@@ -19,7 +19,11 @@ import { loginSchema, LoginFormData } from '../../utils/validation';
 import { useAuthStore } from '../../stores/authStore';
 import { Colors, Spacing, Typography } from '../../config/theme';
 
-export const LoginScreen: React.FC = () => {
+interface LoginScreenProps {
+    onNavigateToSignup: () => void;
+}
+
+export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup }) => {
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading } = useAuthStore();
 
@@ -138,7 +142,9 @@ export const LoginScreen: React.FC = () => {
           {/* Signup Link */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Pas encore de compte ? </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+                onNavigateToSignup()
+            }}>
               <Text style={styles.signupLink}>Inscrivez-vous</Text>
             </TouchableOpacity>
           </View>

@@ -45,6 +45,7 @@ export const Input: React.FC<InputProps> = ({
           placeholderTextColor={Colors.textMuted}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          autoComplete='off'
           {...props}
         />
         
