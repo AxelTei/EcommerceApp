@@ -8,24 +8,14 @@ import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { LoginScreen } from '../screens/auth/LoginScreen';
 import { SignupScreen } from '../screens/auth/SignupScreen';
+import { HomeScreen } from '../screens/shop/HomeScreen';
+import { CartScreen } from '../screens/cart/CartScreen';
 
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // Écrans temporaires
-const HomeScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Home Screen</Text>
-  </View>
-);
-
-const CartScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Cart Screen</Text>
-  </View>
-);
-
 const ProfileScreen = () => {
   const logout = useAuthStore(state => state.logout);
   
