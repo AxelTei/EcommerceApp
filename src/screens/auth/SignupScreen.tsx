@@ -18,12 +18,12 @@ import { Input } from '../../components/common/Input';
 import { signupSchema, SignupFormData } from '../../utils/validation';
 import { useAuthStore } from '../../stores/authStore';
 import { Colors, Spacing, Typography } from '../../config/theme';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-interface SignupScreenProps {
-  onNavigateToLogin: () => void;
-}
 
-export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin }) => {
+export const SignupScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { signup, isLoading } = useAuthStore();
@@ -191,7 +191,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
           {/* Login Link */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Vous avez déjà un compte ? </Text>
-            <TouchableOpacity onPress={onNavigateToLogin}>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
               <Text style={styles.loginLink}>Connectez-vous</Text>
             </TouchableOpacity>
           </View>
