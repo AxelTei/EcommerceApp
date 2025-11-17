@@ -1,5 +1,5 @@
 // src/screens/cart/CartScreen.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  TextInput,
+  Alert,
 } from 'react-native';
 import { useCartStore } from '../../stores/cartStore';
 import { CartItem } from '../../types';
@@ -15,7 +17,23 @@ import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config
 import { Button } from '../../components/common/Button';
 
 export const CartScreen: React.FC = () => {
-  const { items, removeItem, updateQuantity, getSubtotal, getTotal, promoCode } = useCartStore();
+  const { items, removeItem, updateQuantity, getSubtotal, getTotal, promoCode, applyPromoCode, removePromoCode } = useCartStore();
+  const [promoInput, setPromoInput] = useState('');
+  const [promoError, setPromoError] = useState('');
+
+  const handleApplyPromo = async () => {
+    if (!promoInput.trim()) return;
+
+    const success = await applyPromoCode(promoInput.toUpperCase());
+
+    if (success) {
+      setPromoInput('');
+      setPromoError('');
+      Alert.alert('Code promo appliqué', 'Votre réduction a été appliquée !');
+    } else {
+      setPromoError('Code promo invalide ou montant minimum non atteint');
+    }
+  };
 
   const renderCartItem = ({ item }: { item: CartItem }) => (
     <View style={styles.cartItem}>
@@ -97,6 +115,53 @@ export const CartScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       />
 
+      {/* Promo Code*/}
+      <View style={styles.promoContainer}>
+        {promoCode ? (
+          <View style={styles.promoApplied}>
+            <View style={styles.promoAppliedInfo}>
+              <Text style={styles.promoAppliedIcon}>🎉</Text>
+              <View>
+                <Text style={styles.promoAppliedCode}>{promoCode.code}</Text>
+                <Text style={styles.promoAppliedText}>
+                  Code promo appliqué
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity onPress={removePromoCode}>
+              <Text style={styles.promoRemoveIcon}>✕</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            <View style={styles.promoInputContainer}>
+              <TextInput
+                style={styles.promoInput}
+                placeholder='Code promo'
+                placeholderTextColor={Colors.textMuted}
+                value={promoInput}
+                onChangeText={(text) => {
+                  setPromoInput(text);
+                  setPromoError('');
+                }}
+                autoCapitalize='characters'
+              />
+              <TouchableOpacity
+                style={styles.promoApplyButton}
+                onPress={handleApplyPromo}
+              >
+                <Text style={styles.promoApplyText}>Appliquer</Text>
+              </TouchableOpacity>
+            </View>
+            {promoError ? (
+              <Text style={styles.promoError}>{promoError}</Text>
+            ) : null}
+            <Text style={styles.promoHint}>
+              💡 Codes disponibles: SAVE20, FIRST10
+            </Text>
+          </>
+        )}
+      </View>
       {/* Summary */}
       <View style={styles.summaryContainer}>
         <View style={styles.summaryRow}>
@@ -296,5 +361,78 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.textSecondary,
     textAlign: 'center',
+  },
+  // Ajoute ces styles dans le StyleSheet :
+  promoContainer: {
+    margin: Spacing.lg,
+    padding: Spacing.lg,
+    backgroundColor: '#fff',
+    borderRadius: BorderRadius.lg,
+    ...Shadows.small,
+  },
+  promoInputContainer: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  promoInput: {
+    flex: 1,
+    backgroundColor: Colors.surface,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm + 4,
+    borderRadius: BorderRadius.md,
+    fontSize: 16,
+    color: Colors.text,
+  },
+  promoApplyButton: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm + 4,
+    borderRadius: BorderRadius.md,
+    justifyContent: 'center',
+  },
+  promoApplyText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  promoError: {
+    fontSize: 12,
+    color: Colors.error,
+    marginBottom: Spacing.xs,
+  },
+  promoHint: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    fontStyle: 'italic',
+  },
+  promoApplied: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: Colors.success + '15',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  promoAppliedInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  promoAppliedIcon: {
+    fontSize: 24,
+  },
+  promoAppliedCode: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: Colors.success,
+  },
+  promoAppliedText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+  },
+  promoRemoveIcon: {
+    fontSize: 20,
+    color: Colors.textSecondary,
   },
 });
