@@ -10,16 +10,19 @@ import {
   SafeAreaView,
   TextInput,
   Alert,
+  Modal,
 } from 'react-native';
 import { useCartStore } from '../../stores/cartStore';
 import { CartItem } from '../../types';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 import { Button } from '../../components/common/Button';
+import { CheckoutScreen } from './CheckoutScreen';
 
 export const CartScreen: React.FC = () => {
   const { items, removeItem, updateQuantity, getSubtotal, getTotal, promoCode, applyPromoCode, removePromoCode } = useCartStore();
   const [promoInput, setPromoInput] = useState('');
   const [promoError, setPromoError] = useState('');
+  const [checkoutVisible, setCheckoutVisible] = useState(false);
 
   const handleApplyPromo = async () => {
     if (!promoInput.trim()) return;
@@ -192,10 +195,20 @@ export const CartScreen: React.FC = () => {
 
         <Button
           title="Commander"
-          onPress={() => console.log('Checkout')}
+          onPress={() => setCheckoutVisible(true)}
           style={styles.checkoutButton}
         />
       </View>
+      <Modal
+        visible={checkoutVisible}
+        animationType='slide'
+        onRequestClose={() => setCheckoutVisible(false)}
+      >
+        <CheckoutScreen
+          onBack={() => setCheckoutVisible(false)}
+          onSuccess={() => setCheckoutVisible(false)}
+        />
+      </Modal>
     </SafeAreaView>
   );
 };
