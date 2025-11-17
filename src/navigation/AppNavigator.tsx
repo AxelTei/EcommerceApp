@@ -10,22 +10,11 @@ import { LoginScreen } from '../screens/auth/LoginScreen';
 import { SignupScreen } from '../screens/auth/SignupScreen';
 import { HomeScreen } from '../screens/shop/HomeScreen';
 import { CartScreen } from '../screens/cart/CartScreen';
+import { ProfileScreen } from '../screens/profile/ProfileScreen';
 
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
-// Écrans temporaires
-const ProfileScreen = () => {
-  const logout = useAuthStore(state => state.logout);
-  
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-      <Text style={{ fontSize: 24, marginBottom: 20 }}>Profil</Text>
-      <Button title="Se déconnecter" onPress={logout} />
-    </View>
-  );
-};
 
 function MainTabs() {
   const cartItems = useCartStore(state => state.items);
