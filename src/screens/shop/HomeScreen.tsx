@@ -14,10 +14,14 @@ import { mockProducts } from '../../utils/mockData';
 import { Product } from '../../types';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 import { useCartStore } from '../../stores/cartStore';
+import { Modal } from 'react-native';
+import { ProductDetailScreen } from './ProductDetailScreen';
 
 export const HomeScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [detailVisible, setDetailVisible] = useState(false);
   const addItem = useCartStore(state => state.addItem);
 
   const categories = ['Tout', 'electronics', 'clothing', 'shoes', 'accessories'];
@@ -29,7 +33,13 @@ export const HomeScreen: React.FC = () => {
   });
 
   const renderProduct = ({ item }: { item: Product }) => (
-    <TouchableOpacity style={styles.productCard}>
+    <TouchableOpacity
+      style={styles.productCard}
+      onPress={() => {
+        setSelectedProduct(item);
+        setDetailVisible(true);
+      }}
+    >
       <Image source={{ uri: item.images[0] }} style={styles.productImage} />
       
       {!item.inStock && (
@@ -130,6 +140,18 @@ export const HomeScreen: React.FC = () => {
           </View>
         }
       />
+      <Modal
+        visible={detailVisible}
+        animationType='slide'
+        onRequestClose={() => setDetailVisible(false)}
+      >
+        {selectedProduct && (
+          <ProductDetailScreen
+            product={selectedProduct}
+            onBack={() => setDetailVisible(false)}
+          />
+        )}
+      </Modal>
     </SafeAreaView>
   );
 };
