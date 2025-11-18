@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Order } from '../types';
+import { useNotificationsStore } from './notificationsStore';
 
 interface OrderStore {
   orders: Order[];
@@ -25,6 +26,12 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
       estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       trackingNumber: `TRK${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
     };
+
+    useNotificationsStore.getState().addNotification({
+        type: 'order',
+        title: 'Commande confirmée',
+        message: `Votre commande #${newOrder.id.slice(-8)} a été confirmée et sera livrée sous 3 jours.`,
+    });
 
     const updatedAllOrders = [newOrder, ...allOrders];
     await AsyncStorage.setItem(ORDERS_KEY, JSON.stringify(updatedAllOrders));

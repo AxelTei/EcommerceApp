@@ -17,6 +17,7 @@ import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config
 import { FavoritesScreen } from './FavoritesScreen';
 import { ProductDetailScreen } from '../shop/ProductDetailScreen';
 import { Product } from '../../types';
+import { NotificationsScreen } from './NotificationsScreen';
 
 export const ProfileScreen: React.FC = () => {
   const { user, logout } = useAuthStore();
@@ -24,6 +25,7 @@ export const ProfileScreen: React.FC = () => {
   const [favoritesVisible, setFavoritesVisible] = useState(false);
   const [detailVisible, setDetailVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [notificationsVisible, setNotificationsVisible] = useState(false);
 
   const menuItems = [
     { id: '1', icon: '📦', title: 'Mes commandes', subtitle: 'Historique et suivi' },
@@ -89,6 +91,8 @@ export const ProfileScreen: React.FC = () => {
                   setOrdersVisible(true);
                 } else if (item.title === 'Mes favoris') {
                   setFavoritesVisible(true);
+                } else if (item.title === 'Notifications') {
+                  setNotificationsVisible(true);
                 } else {
                   Alert.alert('Bientôt disponible', `${item.title} sera disponible prochainement`);
                 }
@@ -112,40 +116,53 @@ export const ProfileScreen: React.FC = () => {
 
         {/* Version */}
         <Text style={styles.version}>Version 1.0.0</Text>
-        <Modal
-          visible={favoritesVisible}
-          animationType='slide'
-          onRequestClose={() => setFavoritesVisible(false)}
-        >
-          <FavoritesScreen
-            onBack={() => setFavoritesVisible(false)}
-            onProductPress={(product) => {
-              setSelectedProduct(product);
-              setDetailVisible(true);
-            }}
-          />
-        </Modal>
-
-        <Modal
-          visible={detailVisible}
-          animationType='slide'
-          onRequestClose={() => setDetailVisible(false)}
-        >
-          {selectedProduct && (
-            <ProductDetailScreen
-              product={selectedProduct}
-              onBack={() => setDetailVisible(false)}
-            />
-          )}
-        </Modal>
       </ScrollView>
 
+      {/* Orders Modal */}
       <Modal
         visible={ordersVisible}
         animationType="slide"
         onRequestClose={() => setOrdersVisible(false)}
       >
         <OrdersScreen onBack={() => setOrdersVisible(false)} />
+      </Modal>
+
+      {/* Favorites Modal */}
+      <Modal
+        visible={favoritesVisible}
+        animationType="slide"
+        onRequestClose={() => setFavoritesVisible(false)}
+      >
+        <FavoritesScreen
+          onBack={() => setFavoritesVisible(false)}
+          onProductPress={(product) => {
+            setSelectedProduct(product);
+            setDetailVisible(true);
+          }}
+        />
+      </Modal>
+
+      {/* Product Detail Modal */}
+      <Modal
+        visible={detailVisible}
+        animationType="slide"
+        onRequestClose={() => setDetailVisible(false)}
+      >
+        {selectedProduct && (
+          <ProductDetailScreen
+            product={selectedProduct}
+            onBack={() => setDetailVisible(false)}
+          />
+        )}
+      </Modal>
+
+      {/* Notifications Modal - AJOUTE ICI */}
+      <Modal
+        visible={notificationsVisible}
+        animationType="slide"
+        onRequestClose={() => setNotificationsVisible(false)}
+      >
+        <NotificationsScreen onBack={() => setNotificationsVisible(false)} />
       </Modal>
     </SafeAreaView>
   );

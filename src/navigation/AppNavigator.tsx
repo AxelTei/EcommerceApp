@@ -11,6 +11,7 @@ import { SignupScreen } from '../screens/auth/SignupScreen';
 import { HomeScreen } from '../screens/shop/HomeScreen';
 import { CartScreen } from '../screens/cart/CartScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
+import { useNotificationsStore } from '../stores/notificationsStore';
 
 
 const Stack = createNativeStackNavigator();
@@ -18,6 +19,12 @@ const Tab = createBottomTabNavigator();
 
 function MainTabs() {
   const cartItems = useCartStore(state => state.items);
+  const unreadCount = useNotificationsStore(state => state.unreadCount);
+  const loadNotifications = useNotificationsStore(state => state.loadNotifications);
+
+  useEffect(() => {
+    loadNotifications();
+  }, []);
 
   return (
     <Tab.Navigator
@@ -33,6 +40,7 @@ function MainTabs() {
         options={{
           tabBarLabel: 'Accueil',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏠</Text>,
+          tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
         }}
       />
       <Tab.Screen
