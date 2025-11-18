@@ -1,5 +1,5 @@
 // src/screens/cart/CheckoutScreen.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,13 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
+  Modal,
 } from 'react-native';
 import { useCartStore } from '../../stores/cartStore';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 import { Button } from '../../components/common/Button';
+import { useAddressStore } from '../../stores/adressStore';
+import { AddAddressScreen } from '../profile/AddAddressScreen';
 
 interface CheckoutScreenProps {
   onBack: () => void;
@@ -22,29 +25,15 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
   const [step, setStep] = useState(1); // 1: Address, 2: Payment, 3: Review
   const [selectedAddress, setSelectedAddress] = useState<string | null>('1');
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
+  const { addresses, loadAddresses } = useAddressStore();
+  const [addAddressVisible, setAddAddressVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { items, getSubtotal, getTotal, promoCode, clearCart } = useCartStore();
 
-  // Mock addresses
-  const addresses = [
-    {
-      id: '1',
-      label: 'Maison',
-      street: '123 Rue de la Paix',
-      city: 'Paris',
-      postalCode: '75001',
-      country: 'France',
-    },
-    {
-      id: '2',
-      label: 'Travail',
-      street: '456 Avenue des Champs',
-      city: 'Paris',
-      postalCode: '75008',
-      country: 'France',
-    },
-  ];
+  useEffect(() => {
+    loadAddresses();
+  }, []);
 
   const paymentMethods = [
     { id: 'card', icon: '💳', title: 'Carte bancaire', subtitle: 'Visa, Mastercard, Amex' },
@@ -131,7 +120,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
         </TouchableOpacity>
       ))}
 
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity style={styles.addButton} onPress={() => setAddAddressVisible(true)}>
         <Text style={styles.addButtonIcon}>+</Text>
         <Text style={styles.addButtonText}>Ajouter une adresse</Text>
       </TouchableOpacity>
@@ -299,6 +288,19 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
         {step === 2 && renderPaymentStep()}
         {step === 3 && renderReviewStep()}
       </ScrollView>
+      <Modal
+        visible={addAddressVisible}
+        animationType='slide'
+        onRequestClose={() => setAddAddressVisible(false)}
+      >
+        <AddAddressScreen
+          onBack={() => setAddAddressVisible(false)}
+          onSuccess={() => {
+            setAddAddressVisible(false);
+            loadAddresses();
+          }}
+        />
+      </Modal>
     </SafeAreaView>
   );
 };
