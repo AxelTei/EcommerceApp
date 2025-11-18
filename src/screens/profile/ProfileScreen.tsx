@@ -1,5 +1,5 @@
 // src/screens/profile/ProfileScreen.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,16 @@ import {
   ScrollView,
   StyleSheet,
   SafeAreaView,
+  Alert,
+  Modal,
 } from 'react-native';
 import { useAuthStore } from '../../stores/authStore';
+import { OrdersScreen } from './OrdersScreen';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 
 export const ProfileScreen: React.FC = () => {
   const { user, logout } = useAuthStore();
+  const [ordersVisible, setOrdersVisible] = useState(false);
 
   const menuItems = [
     { id: '1', icon: '📦', title: 'Mes commandes', subtitle: 'Historique et suivi' },
@@ -71,7 +75,17 @@ export const ProfileScreen: React.FC = () => {
         {/* Menu Items */}
         <View style={styles.menuContainer}>
           {menuItems.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.menuItem}>
+            <TouchableOpacity 
+              key={item.id} 
+              style={styles.menuItem}
+              onPress={() => {
+                if (item.title === 'Mes commandes') {
+                  setOrdersVisible(true);
+                } else {
+                  Alert.alert('Bientôt disponible', `${item.title} sera disponible prochainement`);
+                }
+              }}
+            >
               <Text style={styles.menuIcon}>{item.icon}</Text>
               <View style={styles.menuContent}>
                 <Text style={styles.menuTitle}>{item.title}</Text>
@@ -91,6 +105,14 @@ export const ProfileScreen: React.FC = () => {
         {/* Version */}
         <Text style={styles.version}>Version 1.0.0</Text>
       </ScrollView>
+
+      <Modal
+        visible={ordersVisible}
+        animationType="slide"
+        onRequestClose={() => setOrdersVisible(false)}
+      >
+        <OrdersScreen onBack={() => setOrdersVisible(false)} />
+      </Modal>
     </SafeAreaView>
   );
 };

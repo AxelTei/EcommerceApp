@@ -11,10 +11,12 @@ import {
   Modal,
 } from 'react-native';
 import { useCartStore } from '../../stores/cartStore';
+import { useAddressStore } from '../../stores/adressStore';
+import { useOrderStore } from '../../stores/orderStore';
+import { useAuthStore } from '../../stores/authStore';
+import { AddAddressScreen } from '../profile/AddAddressScreen';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 import { Button } from '../../components/common/Button';
-import { useAddressStore } from '../../stores/adressStore';
-import { AddAddressScreen } from '../profile/AddAddressScreen';
 
 interface CheckoutScreenProps {
   onBack: () => void;
@@ -22,14 +24,16 @@ interface CheckoutScreenProps {
 }
 
 export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSuccess }) => {
-  const [step, setStep] = useState(1); // 1: Address, 2: Payment, 3: Review
-  const [selectedAddress, setSelectedAddress] = useState<string | null>('1');
+  const [step, setStep] = useState(1);
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
-  const { addresses, loadAddresses } = useAddressStore();
-  const [addAddressVisible, setAddAddressVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [addAddressVisible, setAddAddressVisible] = useState(false);
 
   const { items, getSubtotal, getTotal, promoCode, clearCart } = useCartStore();
+  const { addresses, loadAddresses } = useAddressStore();
+  const addOrder = useOrderStore(state => state.addOrder);
+  const user = useAuthStore(state => state.user);
 
   useEffect(() => {
     loadAddresses();
@@ -47,18 +51,43 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
       return;
     }
 
+    const selectedAddressData = addresses.find(a => a.id === selectedAddress);
+
+    if (!selectedAddressData || !user) {
+      Alert.alert('Erreur', 'Données manquantes');
+      return;
+    }
+
     setIsProcessing(true);
-    
-    // Simulation de paiement
-    setTimeout(() => {
-      setIsProcessing(false);
+
+    try {
+      await addOrder({
+        userId: user.id,
+        items: items,
+        total: getTotal(),
+        subtotal: getSubtotal(),
+        shipping: 5.99,
+        tax: 0,
+        discount: promoCode ? useCartStore.getState().getDiscount() : undefined,
+        status: 'processing',
+        shippingAddress: selectedAddressData,
+        paymentMethod: {
+          type: selectedPayment === 'card' ? 'card' : selectedPayment === 'paypal' ? 'paypal' : 'apple_pay',
+        },
+      });
+      
       clearCart();
+      setIsProcessing(false);
+      
       Alert.alert(
         'Commande confirmée ! 🎉',
-        'Votre commande a été passée avec succès. Vous recevrez un email de confirmation.',
+        'Votre commande a été passée avec succès.',
         [{ text: 'OK', onPress: onSuccess }]
       );
-    }, 2000);
+    } catch (error) {
+      setIsProcessing(false);
+      Alert.alert('Erreur', 'Impossible de passer la commande');
+    }
   };
 
   const renderStepIndicator = () => (
@@ -120,7 +149,10 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
         </TouchableOpacity>
       ))}
 
-      <TouchableOpacity style={styles.addButton} onPress={() => setAddAddressVisible(true)}>
+      <TouchableOpacity 
+        style={styles.addButton}
+        onPress={() => setAddAddressVisible(true)}
+      >
         <Text style={styles.addButtonIcon}>+</Text>
         <Text style={styles.addButtonText}>Ajouter une adresse</Text>
       </TouchableOpacity>
@@ -187,7 +219,6 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
       <View>
         <Text style={styles.stepTitle}>Récapitulatif</Text>
 
-        {/* Order Items */}
         <View style={styles.reviewSection}>
           <Text style={styles.reviewSectionTitle}>Articles ({items.length})</Text>
           {items.map((item) => (
@@ -202,7 +233,6 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
           ))}
         </View>
 
-        {/* Address */}
         <View style={styles.reviewSection}>
           <Text style={styles.reviewSectionTitle}>Livraison</Text>
           {selectedAddressData && (
@@ -216,7 +246,6 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
           )}
         </View>
 
-        {/* Payment */}
         <View style={styles.reviewSection}>
           <Text style={styles.reviewSectionTitle}>Paiement</Text>
           {selectedPaymentData && (
@@ -224,7 +253,6 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
           )}
         </View>
 
-        {/* Total */}
         <View style={styles.totalSection}>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Sous-total</Text>
@@ -269,7 +297,6 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack}>
           <Text style={styles.backIcon}>←</Text>
@@ -288,9 +315,10 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
         {step === 2 && renderPaymentStep()}
         {step === 3 && renderReviewStep()}
       </ScrollView>
+
       <Modal
         visible={addAddressVisible}
-        animationType='slide'
+        animationType="slide"
         onRequestClose={() => setAddAddressVisible(false)}
       >
         <AddAddressScreen
