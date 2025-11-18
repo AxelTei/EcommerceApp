@@ -14,6 +14,7 @@ import { Product } from '../../types';
 import { useCartStore } from '../../stores/cartStore';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 import { Button } from '../../components/common/Button';
+import { useFavoritesStore } from '../../stores/favoritesStore';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -31,6 +32,9 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ produc
     product.colors?.[0]
   );
   const [quantity, setQuantity] = useState(1);
+  const { addFavorite, removeFavorite, isFavorite } = useFavoritesStore();
+  const isProductFavorite = isFavorite(product.id);
+
 
   const addItem = useCartStore(state => state.addItem);
 
@@ -50,8 +54,17 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ produc
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.favoriteButton}>
-          <Text style={styles.favoriteIcon}>🤍</Text>
+        <TouchableOpacity
+          style={styles.favoriteButton}
+          onPress={() => {
+            if (isProductFavorite) {
+              removeFavorite(product.id);
+            } else {
+              addFavorite(product);
+            }
+          }}
+        >
+          <Text style={styles.favoriteIcon}>{isProductFavorite ? '❤️' : '🤍'}</Text>
         </TouchableOpacity>
       </View>
 

@@ -14,10 +14,16 @@ import {
 import { useAuthStore } from '../../stores/authStore';
 import { OrdersScreen } from './OrdersScreen';
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
+import { FavoritesScreen } from './FavoritesScreen';
+import { ProductDetailScreen } from '../shop/ProductDetailScreen';
+import { Product } from '../../types';
 
 export const ProfileScreen: React.FC = () => {
   const { user, logout } = useAuthStore();
   const [ordersVisible, setOrdersVisible] = useState(false);
+  const [favoritesVisible, setFavoritesVisible] = useState(false);
+  const [detailVisible, setDetailVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const menuItems = [
     { id: '1', icon: '📦', title: 'Mes commandes', subtitle: 'Historique et suivi' },
@@ -81,6 +87,8 @@ export const ProfileScreen: React.FC = () => {
               onPress={() => {
                 if (item.title === 'Mes commandes') {
                   setOrdersVisible(true);
+                } else if (item.title === 'Mes favoris') {
+                  setFavoritesVisible(true);
                 } else {
                   Alert.alert('Bientôt disponible', `${item.title} sera disponible prochainement`);
                 }
@@ -104,6 +112,32 @@ export const ProfileScreen: React.FC = () => {
 
         {/* Version */}
         <Text style={styles.version}>Version 1.0.0</Text>
+        <Modal
+          visible={favoritesVisible}
+          animationType='slide'
+          onRequestClose={() => setFavoritesVisible(false)}
+        >
+          <FavoritesScreen
+            onBack={() => setFavoritesVisible(false)}
+            onProductPress={(product) => {
+              setSelectedProduct(product);
+              setDetailVisible(true);
+            }}
+          />
+        </Modal>
+
+        <Modal
+          visible={detailVisible}
+          animationType='slide'
+          onRequestClose={() => setDetailVisible(false)}
+        >
+          {selectedProduct && (
+            <ProductDetailScreen
+              product={selectedProduct}
+              onBack={() => setDetailVisible(false)}
+            />
+          )}
+        </Modal>
       </ScrollView>
 
       <Modal
