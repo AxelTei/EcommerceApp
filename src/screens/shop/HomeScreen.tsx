@@ -4,7 +4,6 @@ import {
   View,
   Text,
   FlatList,
-  Image,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
@@ -15,8 +14,9 @@ import { mockProducts } from '../../utils/mockData';
 import { Product } from '../../types';
 import { useCartStore } from '../../stores/cartStore';
 import { ProductDetailScreen } from './ProductDetailScreen';
+import { AnimatedProductCard } from '../../components/animations/AnimatedProductCard';
 import { useTheme } from '../../context/ThemeContext';
-import { Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
+import { Spacing, Typography, BorderRadius } from '../../config/theme';
 
 export const HomeScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -108,86 +108,6 @@ export const HomeScreen: React.FC = () => {
     productsGrid: {
       paddingHorizontal: Spacing.md,
     },
-    productCard: {
-      flex: 1,
-      margin: Spacing.sm,
-      backgroundColor: Colors.surface,
-      borderRadius: BorderRadius.lg,
-      overflow: 'hidden',
-      ...Shadows.medium,
-    },
-    productImage: {
-      width: '100%',
-      height: 180,
-      backgroundColor: Colors.border,
-    },
-    outOfStockBadge: {
-      position: 'absolute',
-      top: Spacing.sm,
-      right: Spacing.sm,
-      backgroundColor: Colors.error,
-      paddingHorizontal: Spacing.sm,
-      paddingVertical: 4,
-      borderRadius: BorderRadius.sm,
-    },
-    outOfStockText: {
-      color: '#fff',
-      fontSize: 12,
-      fontWeight: '600',
-    },
-    productInfo: {
-      padding: Spacing.sm + 4,
-    },
-    productBrand: {
-      fontSize: 12,
-      color: Colors.textMuted,
-      textTransform: 'uppercase',
-      marginBottom: 4,
-    },
-    productName: {
-      ...Typography.small,
-      fontWeight: '600',
-      color: Colors.text,
-      marginBottom: Spacing.xs,
-    },
-    ratingContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: Spacing.xs,
-    },
-    ratingText: {
-      fontSize: 12,
-      color: Colors.text,
-      marginRight: 4,
-    },
-    reviewsText: {
-      fontSize: 12,
-      color: Colors.textMuted,
-    },
-    priceContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: Spacing.xs,
-    },
-    price: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: Colors.primary,
-    },
-    addButton: {
-      width: 32,
-      height: 32,
-      backgroundColor: Colors.primary,
-      borderRadius: BorderRadius.full,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    addButtonText: {
-      color: '#fff',
-      fontSize: 20,
-      fontWeight: 'bold',
-    },
     emptyContainer: {
       flex: 1,
       justifyContent: 'center',
@@ -200,42 +120,16 @@ export const HomeScreen: React.FC = () => {
     },
   });
 
-  const renderProduct = ({ item }: { item: Product }) => (
-    <TouchableOpacity 
-      style={styles.productCard}
+  const renderProduct = ({ item, index }: { item: Product; index: number }) => (
+    <AnimatedProductCard
+      product={item}
+      index={index}
       onPress={() => {
         setSelectedProduct(item);
         setDetailVisible(true);
       }}
-    >
-      <Image source={{ uri: item.images[0] }} style={styles.productImage} />
-      
-      {!item.inStock && (
-        <View style={styles.outOfStockBadge}>
-          <Text style={styles.outOfStockText}>Rupture</Text>
-        </View>
-      )}
-
-      <View style={styles.productInfo}>
-        <Text style={styles.productBrand}>{item.brand}</Text>
-        <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-        
-        <View style={styles.ratingContainer}>
-          <Text style={styles.ratingText}>⭐ {item.rating}</Text>
-          <Text style={styles.reviewsText}>({item.reviewsCount})</Text>
-        </View>
-
-        <View style={styles.priceContainer}>
-          <Text style={styles.price}>{item.price.toFixed(2)}€</Text>
-          <TouchableOpacity 
-            style={styles.addButton}
-            onPress={() => addItem(item, 1)}
-          >
-            <Text style={styles.addButtonText}>+</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
+      onAddToCart={() => addItem(item, 1)}
+    />
   );
 
   return (

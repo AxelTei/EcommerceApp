@@ -13,6 +13,7 @@ import { CartScreen } from '../screens/cart/CartScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
 import { useNotificationsStore } from '../stores/notificationsStore';
 import { useThemeStore } from '../stores/themeStore';
+import { useTheme } from '../context/ThemeContext';
 
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +23,7 @@ function MainTabs() {
   const cartItems = useCartStore(state => state.items);
   const unreadCount = useNotificationsStore(state => state.unreadCount);
   const loadNotifications = useNotificationsStore(state => state.loadNotifications);
+  const { colors: Colors, isDark } = useTheme();
 
   useEffect(() => {
     loadNotifications();
@@ -31,8 +33,16 @@ function MainTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#6366F1',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarStyle: {
+          backgroundColor: Colors.surface, // AJOUTE
+          borderTopColor: Colors.border, // AJOUTE
+        },
+        tabBarActiveTintColor: Colors.primary,
+        tabBarInactiveTintColor: Colors.textMuted, // AJOUTE
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
       }}
     >
       <Tab.Screen
