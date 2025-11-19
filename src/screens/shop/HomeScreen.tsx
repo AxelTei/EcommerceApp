@@ -9,11 +9,13 @@ import {
   SafeAreaView,
   TextInput,
   Modal,
+  Alert,
 } from 'react-native';
 import { mockProducts } from '../../utils/mockData';
 import { Product } from '../../types';
 import { useCartStore } from '../../stores/cartStore';
 import { ProductDetailScreen } from './ProductDetailScreen';
+import { QRScannerScreen } from './QRScannerScreen';
 import { AnimatedProductCard } from '../../components/animations/AnimatedProductCard';
 import { useTheme } from '../../context/ThemeContext';
 import { Spacing, Typography, BorderRadius } from '../../config/theme';
@@ -23,8 +25,10 @@ export const HomeScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
+  const [qrScannerVisible, setQrScannerVisible] = useState(false);
   
   const addItem = useCartStore(state => state.addItem);
+  const { applyPromoCode } = useCartStore();
   const { colors: Colors } = useTheme();
 
   const categories = ['Tout', 'electronics', 'clothing', 'shoes', 'accessories'];
@@ -46,6 +50,20 @@ export const HomeScreen: React.FC = () => {
     return labels[cat] || cat;
   };
 
+  const handleQRScan = async (code: string) => {
+    setTimeout(async () => {
+      setQrScannerVisible(false);
+      
+      const success = await applyPromoCode(code);
+      
+      if (success) {
+        Alert.alert('Code promo scanné !', `Le code ${code} a été appliqué à votre panier`);
+      } else {
+        Alert.alert('Code invalide', 'Ce code QR n\'est pas un code promo valide');
+      }
+    }, 500);
+  };
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -61,6 +79,10 @@ export const HomeScreen: React.FC = () => {
     headerTitle: {
       ...Typography.h2,
       color: Colors.text,
+    },
+    headerIcons: {
+      flexDirection: 'row',
+      gap: Spacing.md,
     },
     notificationIcon: {
       fontSize: 24,
@@ -136,9 +158,14 @@ export const HomeScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Boutique</Text>
-        <TouchableOpacity>
-          <Text style={styles.notificationIcon}>🔔</Text>
-        </TouchableOpacity>
+        <View style={styles.headerIcons}>
+          <TouchableOpacity onPress={() => setQrScannerVisible(true)}>
+            <Text style={styles.notificationIcon}>📷</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.notificationIcon}>🔔</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.searchContainer}>
@@ -202,6 +229,17 @@ export const HomeScreen: React.FC = () => {
             onBack={() => setDetailVisible(false)}
           />
         )}
+      </Modal>
+
+      <Modal
+        visible={qrScannerVisible}
+        animationType="slide"
+        onRequestClose={() => setQrScannerVisible(false)}
+      >
+        <QRScannerScreen
+          onBack={() => setQrScannerVisible(false)}
+          onScan={handleQRScan}
+        />
       </Modal>
     </SafeAreaView>
   );
