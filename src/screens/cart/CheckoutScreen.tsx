@@ -15,7 +15,8 @@ import { useAddressStore } from '../../stores/adressStore';
 import { useOrderStore } from '../../stores/orderStore';
 import { useAuthStore } from '../../stores/authStore';
 import { AddAddressScreen } from '../profile/AddAddressScreen';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
+import { useTheme } from '../../context/ThemeContext';
+import { Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 import { Button } from '../../components/common/Button';
 
 interface CheckoutScreenProps {
@@ -34,6 +35,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
   const { addresses, loadAddresses } = useAddressStore();
   const addOrder = useOrderStore(state => state.addOrder);
   const user = useAuthStore(state => state.user);
+  const { colors: Colors } = useTheme();
 
   useEffect(() => {
     loadAddresses();
@@ -89,6 +91,259 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
       Alert.alert('Erreur', 'Impossible de passer la commande');
     }
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+      backgroundColor: Colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: Colors.border,
+    },
+    backIcon: {
+      fontSize: 24,
+      color: Colors.text,
+    },
+    headerTitle: {
+      ...Typography.h3,
+      color: Colors.text,
+    },
+    stepIndicator: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: Spacing.lg,
+      backgroundColor: Colors.surface,
+    },
+    stepContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    stepCircle: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: Colors.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: Colors.border,
+    },
+    stepCircleActive: {
+      backgroundColor: Colors.primary,
+      borderColor: Colors.primary,
+    },
+    stepCircleComplete: {
+      backgroundColor: Colors.success,
+      borderColor: Colors.success,
+    },
+    stepNumber: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.textMuted,
+    },
+    stepNumberActive: {
+      color: '#fff',
+    },
+    stepLine: {
+      width: 40,
+      height: 2,
+      backgroundColor: Colors.border,
+      marginHorizontal: 4,
+    },
+    stepLineActive: {
+      backgroundColor: Colors.success,
+    },
+    content: {
+      flex: 1,
+      padding: Spacing.lg,
+    },
+    stepTitle: {
+      ...Typography.h2,
+      color: Colors.text,
+      marginBottom: Spacing.lg,
+    },
+    addressCard: {
+      backgroundColor: Colors.surface,
+      padding: Spacing.lg,
+      borderRadius: BorderRadius.lg,
+      marginBottom: Spacing.md,
+      borderWidth: 2,
+      borderColor: Colors.border,
+    },
+    addressCardSelected: {
+      borderColor: Colors.primary,
+    },
+    addressHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: Spacing.sm,
+    },
+    addressLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.text,
+    },
+    addressText: {
+      ...Typography.small,
+      color: Colors.textSecondary,
+      marginTop: 2,
+    },
+    radioButton: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: Colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    radioButtonSelected: {
+      borderColor: Colors.primary,
+    },
+    radioButtonInner: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: Colors.primary,
+    },
+    addButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: Spacing.lg,
+      borderWidth: 2,
+      borderColor: Colors.border,
+      borderRadius: BorderRadius.lg,
+      borderStyle: 'dashed',
+      marginBottom: Spacing.lg,
+    },
+    addButtonIcon: {
+      fontSize: 20,
+      color: Colors.primary,
+      marginRight: Spacing.sm,
+    },
+    addButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.primary,
+    },
+    paymentCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: Colors.surface,
+      padding: Spacing.lg,
+      borderRadius: BorderRadius.lg,
+      marginBottom: Spacing.md,
+      borderWidth: 2,
+      borderColor: Colors.border,
+    },
+    paymentCardSelected: {
+      borderColor: Colors.primary,
+    },
+    paymentIcon: {
+      fontSize: 32,
+      marginRight: Spacing.md,
+    },
+    paymentInfo: {
+      flex: 1,
+    },
+    paymentTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.text,
+      marginBottom: 4,
+    },
+    paymentSubtitle: {
+      ...Typography.small,
+      color: Colors.textSecondary,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      gap: Spacing.md,
+    },
+    halfButton: {
+      flex: 1,
+    },
+    reviewSection: {
+      backgroundColor: Colors.surface,
+      padding: Spacing.lg,
+      borderRadius: BorderRadius.lg,
+      marginBottom: Spacing.md,
+    },
+    reviewSectionTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.text,
+      marginBottom: Spacing.sm,
+    },
+    reviewItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: Spacing.xs,
+    },
+    reviewItemName: {
+      flex: 1,
+      ...Typography.small,
+      color: Colors.textSecondary,
+    },
+    reviewItemPrice: {
+      ...Typography.small,
+      fontWeight: '600',
+      color: Colors.text,
+    },
+    reviewText: {
+      ...Typography.small,
+      color: Colors.textSecondary,
+      marginTop: 2,
+    },
+    totalSection: {
+      backgroundColor: Colors.surface,
+      padding: Spacing.lg,
+      borderRadius: BorderRadius.lg,
+      marginBottom: Spacing.lg,
+    },
+    totalRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: Spacing.sm,
+    },
+    totalLabel: {
+      ...Typography.body,
+      color: Colors.textSecondary,
+    },
+    totalValue: {
+      ...Typography.body,
+      fontWeight: '600',
+      color: Colors.text,
+    },
+    discountValue: {
+      ...Typography.body,
+      fontWeight: '600',
+      color: Colors.success,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: Colors.border,
+      marginVertical: Spacing.sm,
+    },
+    finalLabel: {
+      ...Typography.h3,
+      color: Colors.text,
+    },
+    finalValue: {
+      ...Typography.h3,
+      color: Colors.primary,
+    },
+  });
 
   const renderStepIndicator = () => (
     <View style={styles.stepIndicator}>
@@ -332,256 +587,3 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ onBack, onSucces
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.text,
-  },
-  headerTitle: {
-    ...Typography.h3,
-    color: Colors.text,
-  },
-  stepIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: Spacing.lg,
-    backgroundColor: '#fff',
-  },
-  stepContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  stepCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: Colors.border,
-  },
-  stepCircleActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-  },
-  stepCircleComplete: {
-    backgroundColor: Colors.success,
-    borderColor: Colors.success,
-  },
-  stepNumber: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.textMuted,
-  },
-  stepNumberActive: {
-    color: '#fff',
-  },
-  stepLine: {
-    width: 40,
-    height: 2,
-    backgroundColor: Colors.border,
-    marginHorizontal: 4,
-  },
-  stepLineActive: {
-    backgroundColor: Colors.success,
-  },
-  content: {
-    flex: 1,
-    padding: Spacing.lg,
-  },
-  stepTitle: {
-    ...Typography.h2,
-    color: Colors.text,
-    marginBottom: Spacing.lg,
-  },
-  addressCard: {
-    backgroundColor: '#fff',
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.md,
-    borderWidth: 2,
-    borderColor: Colors.border,
-  },
-  addressCardSelected: {
-    borderColor: Colors.primary,
-  },
-  addressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-  },
-  addressLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.text,
-  },
-  addressText: {
-    ...Typography.small,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  radioButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: Colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  radioButtonSelected: {
-    borderColor: Colors.primary,
-  },
-  radioButtonInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: Colors.primary,
-  },
-  addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.lg,
-    borderWidth: 2,
-    borderColor: Colors.border,
-    borderRadius: BorderRadius.lg,
-    borderStyle: 'dashed',
-    marginBottom: Spacing.lg,
-  },
-  addButtonIcon: {
-    fontSize: 20,
-    color: Colors.primary,
-    marginRight: Spacing.sm,
-  },
-  addButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.primary,
-  },
-  paymentCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.md,
-    borderWidth: 2,
-    borderColor: Colors.border,
-  },
-  paymentCardSelected: {
-    borderColor: Colors.primary,
-  },
-  paymentIcon: {
-    fontSize: 32,
-    marginRight: Spacing.md,
-  },
-  paymentInfo: {
-    flex: 1,
-  },
-  paymentTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  paymentSubtitle: {
-    ...Typography.small,
-    color: Colors.textSecondary,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-  },
-  halfButton: {
-    flex: 1,
-  },
-  reviewSection: {
-    backgroundColor: '#fff',
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.md,
-  },
-  reviewSectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.text,
-    marginBottom: Spacing.sm,
-  },
-  reviewItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: Spacing.xs,
-  },
-  reviewItemName: {
-    flex: 1,
-    ...Typography.small,
-    color: Colors.textSecondary,
-  },
-  reviewItemPrice: {
-    ...Typography.small,
-    fontWeight: '600',
-    color: Colors.text,
-  },
-  reviewText: {
-    ...Typography.small,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  totalSection: {
-    backgroundColor: '#fff',
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.lg,
-  },
-  totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: Spacing.sm,
-  },
-  totalLabel: {
-    ...Typography.body,
-    color: Colors.textSecondary,
-  },
-  totalValue: {
-    ...Typography.body,
-    fontWeight: '600',
-    color: Colors.text,
-  },
-  discountValue: {
-    ...Typography.body,
-    fontWeight: '600',
-    color: Colors.success,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: Colors.border,
-    marginVertical: Spacing.sm,
-  },
-  finalLabel: {
-    ...Typography.h3,
-    color: Colors.text,
-  },
-  finalValue: {
-    ...Typography.h3,
-    color: Colors.primary,
-  },
-});

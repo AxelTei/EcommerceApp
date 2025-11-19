@@ -12,8 +12,8 @@ import {
 import { useFavoritesStore } from '../../stores/favoritesStore';
 import { useCartStore } from '../../stores/cartStore';
 import { Product } from '../../types';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
-import { Button } from '../../components/common/Button';
+import { useTheme } from '../../context/ThemeContext';
+import { Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 
 interface FavoritesScreenProps {
   onBack: () => void;
@@ -23,10 +23,140 @@ interface FavoritesScreenProps {
 export const FavoritesScreen: React.FC<FavoritesScreenProps> = ({ onBack, onProductPress }) => {
   const { favorites, removeFavorite, loadFavorites } = useFavoritesStore();
   const addItem = useCartStore(state => state.addItem);
+  const { colors: Colors } = useTheme();
 
   useEffect(() => {
     loadFavorites();
   }, []);
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+      backgroundColor: Colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: Colors.border,
+    },
+    backIcon: {
+      fontSize: 24,
+      color: Colors.text,
+    },
+    headerTitle: {
+      ...Typography.h3,
+      color: Colors.text,
+    },
+    listContent: {
+      padding: Spacing.lg,
+    },
+    favoriteCard: {
+      backgroundColor: Colors.surface,
+      borderRadius: BorderRadius.lg,
+      marginBottom: Spacing.md,
+      overflow: 'hidden',
+      ...Shadows.medium,
+    },
+    imageContainer: {
+      width: '100%',
+      height: 200,
+      backgroundColor: Colors.border,
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+    },
+    removeButton: {
+      position: 'absolute',
+      top: Spacing.md,
+      right: Spacing.md,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...Shadows.small,
+    },
+    removeIcon: {
+      fontSize: 20,
+    },
+    info: {
+      padding: Spacing.md,
+    },
+    brand: {
+      fontSize: 12,
+      color: Colors.textMuted,
+      textTransform: 'uppercase',
+      marginBottom: 4,
+    },
+    name: {
+      ...Typography.body,
+      fontWeight: '600',
+      color: Colors.text,
+      marginBottom: Spacing.xs,
+    },
+    ratingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: Spacing.sm,
+    },
+    rating: {
+      fontSize: 14,
+      color: Colors.text,
+      marginRight: 4,
+    },
+    reviews: {
+      fontSize: 12,
+      color: Colors.textSecondary,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    price: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: Colors.primary,
+    },
+    addButton: {
+      backgroundColor: Colors.primary,
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.sm,
+      borderRadius: BorderRadius.md,
+    },
+    addButtonText: {
+      color: '#fff',
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    emptyContainer: {
+      alignItems: 'center',
+      paddingTop: 60,
+    },
+    emptyIcon: {
+      fontSize: 80,
+      marginBottom: Spacing.lg,
+      opacity: 0.3,
+    },
+    emptyTitle: {
+      ...Typography.h3,
+      color: Colors.text,
+      marginBottom: Spacing.sm,
+    },
+    emptyText: {
+      ...Typography.body,
+      color: Colors.textSecondary,
+      textAlign: 'center',
+      paddingHorizontal: Spacing.xl,
+    },
+  });
 
   const renderFavorite = ({ item }: { item: Product }) => (
     <View style={styles.favoriteCard}>
@@ -95,132 +225,3 @@ export const FavoritesScreen: React.FC<FavoritesScreenProps> = ({ onBack, onProd
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.text,
-  },
-  headerTitle: {
-    ...Typography.h3,
-    color: Colors.text,
-  },
-  listContent: {
-    padding: Spacing.lg,
-  },
-  favoriteCard: {
-    backgroundColor: '#fff',
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.md,
-    overflow: 'hidden',
-    ...Shadows.medium,
-  },
-  imageContainer: {
-    width: '100%',
-    height: 200,
-    backgroundColor: Colors.surface,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  removeButton: {
-    position: 'absolute',
-    top: Spacing.md,
-    right: Spacing.md,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...Shadows.small,
-  },
-  removeIcon: {
-    fontSize: 20,
-  },
-  info: {
-    padding: Spacing.md,
-  },
-  brand: {
-    fontSize: 12,
-    color: Colors.textMuted,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  name: {
-    ...Typography.body,
-    fontWeight: '600',
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-  },
-  rating: {
-    fontSize: 14,
-    color: Colors.text,
-    marginRight: 4,
-  },
-  reviews: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  price: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.primary,
-  },
-  addButton: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  emptyIcon: {
-    fontSize: 80,
-    marginBottom: Spacing.lg,
-    opacity: 0.3,
-  },
-  emptyTitle: {
-    ...Typography.h3,
-    color: Colors.text,
-    marginBottom: Spacing.sm,
-  },
-  emptyText: {
-    ...Typography.body,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    paddingHorizontal: Spacing.xl,
-  },
-});

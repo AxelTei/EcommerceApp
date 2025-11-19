@@ -15,7 +15,8 @@ import { Input } from '../../components/common/Input';
 import { Button } from '../../components/common/Button';
 import { addressSchema, AddressFormData } from '../../utils/validation';
 import { useAddressStore } from '../../stores/adressStore';
-import { Colors, Spacing, Typography } from '../../config/theme';
+import { useTheme } from '../../context/ThemeContext';
+import { Spacing, Typography } from '../../config/theme';
 
 interface AddAddressScreenProps {
   onBack: () => void;
@@ -24,6 +25,7 @@ interface AddAddressScreenProps {
 
 export const AddAddressScreen: React.FC<AddAddressScreenProps> = ({ onBack, onSuccess }) => {
   const addAddress = useAddressStore(state => state.addAddress);
+  const { colors: Colors } = useTheme();
 
   const {
     control,
@@ -51,9 +53,47 @@ export const AddAddressScreen: React.FC<AddAddressScreenProps> = ({ onBack, onSu
     }
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+      backgroundColor: Colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: Colors.border,
+    },
+    backIcon: {
+      fontSize: 24,
+      color: Colors.text,
+    },
+    headerTitle: {
+      ...Typography.h3,
+      color: Colors.text,
+    },
+    content: {
+      flex: 1,
+      padding: Spacing.lg,
+    },
+    row: {
+      flexDirection: 'row',
+      gap: Spacing.md,
+    },
+    halfInput: {
+      flex: 1,
+    },
+    submitButton: {
+      marginTop: Spacing.lg,
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack}>
           <Text style={styles.backIcon}>←</Text>
@@ -163,42 +203,3 @@ export const AddAddressScreen: React.FC<AddAddressScreenProps> = ({ onBack, onSu
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.text,
-  },
-  headerTitle: {
-    ...Typography.h3,
-    color: Colors.text,
-  },
-  content: {
-    flex: 1,
-    padding: Spacing.lg,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-  },
-  halfInput: {
-    flex: 1,
-  },
-  submitButton: {
-    marginTop: Spacing.lg,
-  },
-});

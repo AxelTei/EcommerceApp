@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { useOrderStore } from '../../stores/orderStore';
 import { Order, OrderStatus } from '../../types';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
+import { useTheme } from '../../context/ThemeContext';
+import { Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 
 interface OrdersScreenProps {
   onBack: () => void;
@@ -19,6 +20,7 @@ interface OrdersScreenProps {
 
 export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onBack }) => {
   const { orders, loadOrders } = useOrderStore();
+  const { colors: Colors } = useTheme();
 
   useEffect(() => {
     loadOrders();
@@ -54,6 +56,148 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onBack }) => {
     });
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+      backgroundColor: Colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: Colors.border,
+    },
+    backIcon: {
+      fontSize: 24,
+      color: Colors.text,
+    },
+    headerTitle: {
+      ...Typography.h3,
+      color: Colors.text,
+    },
+    listContent: {
+      padding: Spacing.lg,
+    },
+    orderCard: {
+      backgroundColor: Colors.surface,
+      borderRadius: BorderRadius.lg,
+      padding: Spacing.lg,
+      marginBottom: Spacing.md,
+      ...Shadows.medium,
+    },
+    orderHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: Spacing.md,
+    },
+    orderNumber: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: Colors.text,
+      marginBottom: 4,
+    },
+    orderDate: {
+      fontSize: 12,
+      color: Colors.textSecondary,
+    },
+    statusBadge: {
+      paddingHorizontal: Spacing.md,
+      paddingVertical: Spacing.xs,
+      borderRadius: BorderRadius.full,
+    },
+    statusText: {
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    productsPreview: {
+      flexDirection: 'row',
+      marginBottom: Spacing.md,
+    },
+    productThumb: {
+      width: 50,
+      height: 50,
+      borderRadius: BorderRadius.md,
+      backgroundColor: Colors.border,
+      marginRight: Spacing.sm,
+    },
+    moreProducts: {
+      width: 50,
+      height: 50,
+      borderRadius: BorderRadius.md,
+      backgroundColor: Colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    moreProductsText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: Colors.textSecondary,
+    },
+    orderInfo: {
+      borderTopWidth: 1,
+      borderTopColor: Colors.border,
+      paddingTop: Spacing.md,
+    },
+    infoRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: Spacing.xs,
+    },
+    infoLabel: {
+      fontSize: 14,
+      color: Colors.textSecondary,
+    },
+    infoValue: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: Colors.text,
+    },
+    totalValue: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: Colors.primary,
+    },
+    trackingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: Spacing.sm,
+      backgroundColor: Colors.background,
+      padding: Spacing.sm,
+      borderRadius: BorderRadius.md,
+    },
+    trackingLabel: {
+      fontSize: 12,
+      color: Colors.textSecondary,
+    },
+    trackingNumber: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: Colors.text,
+    },
+    emptyContainer: {
+      alignItems: 'center',
+      paddingTop: 60,
+    },
+    emptyIcon: {
+      fontSize: 80,
+      marginBottom: Spacing.lg,
+    },
+    emptyTitle: {
+      ...Typography.h3,
+      color: Colors.text,
+      marginBottom: Spacing.sm,
+    },
+    emptyText: {
+      ...Typography.body,
+      color: Colors.textSecondary,
+    },
+  });
+
   const renderOrder = ({ item }: { item: Order }) => (
     <TouchableOpacity style={styles.orderCard}>
       <View style={styles.orderHeader}>
@@ -68,7 +212,6 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onBack }) => {
         </View>
       </View>
 
-      {/* Products Preview */}
       <View style={styles.productsPreview}>
         {item.items.slice(0, 3).map((cartItem, index) => (
           <Image
@@ -84,7 +227,6 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onBack }) => {
         )}
       </View>
 
-      {/* Info */}
       <View style={styles.orderInfo}>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Articles</Text>
@@ -132,145 +274,3 @@ export const OrdersScreen: React.FC<OrdersScreenProps> = ({ onBack }) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.text,
-  },
-  headerTitle: {
-    ...Typography.h3,
-    color: Colors.text,
-  },
-  listContent: {
-    padding: Spacing.lg,
-  },
-  orderCard: {
-    backgroundColor: '#fff',
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    marginBottom: Spacing.md,
-    ...Shadows.medium,
-  },
-  orderHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: Spacing.md,
-  },
-  orderNumber: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  orderDate: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-  },
-  statusBadge: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  productsPreview: {
-    flexDirection: 'row',
-    marginBottom: Spacing.md,
-  },
-  productThumb: {
-    width: 50,
-    height: 50,
-    borderRadius: BorderRadius.md,
-    backgroundColor: Colors.surface,
-    marginRight: Spacing.sm,
-  },
-  moreProducts: {
-    width: 50,
-    height: 50,
-    borderRadius: BorderRadius.md,
-    backgroundColor: Colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  moreProductsText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-  },
-  orderInfo: {
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    paddingTop: Spacing.md,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: Spacing.xs,
-  },
-  infoLabel: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-  },
-  infoValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.text,
-  },
-  totalValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: Colors.primary,
-  },
-  trackingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: Spacing.sm,
-    backgroundColor: Colors.surface,
-    padding: Spacing.sm,
-    borderRadius: BorderRadius.md,
-  },
-  trackingLabel: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-  },
-  trackingNumber: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: Colors.text,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  emptyIcon: {
-    fontSize: 80,
-    marginBottom: Spacing.lg,
-  },
-  emptyTitle: {
-    ...Typography.h3,
-    color: Colors.text,
-    marginBottom: Spacing.sm,
-  },
-  emptyText: {
-    ...Typography.body,
-    color: Colors.textSecondary,
-  },
-});

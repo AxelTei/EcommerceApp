@@ -9,7 +9,8 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useNotificationsStore, Notification, NotificationType } from '../../stores/notificationsStore';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
+import { useTheme } from '../../context/ThemeContext';
+import { Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 
 interface NotificationsScreenProps {
   onBack: () => void;
@@ -17,6 +18,7 @@ interface NotificationsScreenProps {
 
 export const NotificationsScreen: React.FC<NotificationsScreenProps> = ({ onBack }) => {
   const { notifications, markAsRead, markAllAsRead, deleteNotification, loadNotifications } = useNotificationsStore();
+  const { colors: Colors } = useTheme();
 
   useEffect(() => {
     loadNotifications();
@@ -54,6 +56,123 @@ export const NotificationsScreen: React.FC<NotificationsScreenProps> = ({ onBack
       month: 'short',
     });
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+    },
+    topHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+      backgroundColor: Colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: Colors.border,
+    },
+    backIcon: {
+      fontSize: 24,
+      color: Colors.text,
+    },
+    headerTitle: {
+      ...Typography.h3,
+      color: Colors.text,
+    },
+    markAllRead: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: Colors.primary,
+    },
+    listContent: {
+      padding: Spacing.md,
+    },
+    notificationCard: {
+      flexDirection: 'row',
+      backgroundColor: Colors.surface,
+      borderRadius: BorderRadius.lg,
+      padding: Spacing.md,
+      marginBottom: Spacing.md,
+      ...Shadows.small,
+    },
+    notificationCardUnread: {
+      backgroundColor: Colors.primary + '05',
+      borderLeftWidth: 3,
+      borderLeftColor: Colors.primary,
+    },
+    iconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: Spacing.md,
+    },
+    icon: {
+      fontSize: 24,
+    },
+    content: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    title: {
+      ...Typography.body,
+      fontWeight: '600',
+      color: Colors.text,
+      flex: 1,
+    },
+    titleUnread: {
+      fontWeight: 'bold',
+    },
+    unreadDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: Colors.primary,
+      marginLeft: Spacing.xs,
+    },
+    message: {
+      ...Typography.small,
+      color: Colors.textSecondary,
+      marginBottom: 4,
+    },
+    date: {
+      fontSize: 12,
+      color: Colors.textMuted,
+    },
+    deleteButton: {
+      padding: Spacing.xs,
+    },
+    deleteIcon: {
+      fontSize: 18,
+      color: Colors.textMuted,
+    },
+    emptyContainer: {
+      alignItems: 'center',
+      paddingTop: 60,
+    },
+    emptyIcon: {
+      fontSize: 80,
+      marginBottom: Spacing.lg,
+      opacity: 0.3,
+    },
+    emptyTitle: {
+      ...Typography.h3,
+      color: Colors.text,
+      marginBottom: Spacing.sm,
+    },
+    emptyText: {
+      ...Typography.body,
+      color: Colors.textSecondary,
+      textAlign: 'center',
+      paddingHorizontal: Spacing.xl,
+    },
+  });
 
   const renderNotification = ({ item }: { item: Notification }) => (
     <TouchableOpacity
@@ -123,120 +242,3 @@ export const NotificationsScreen: React.FC<NotificationsScreenProps> = ({ onBack
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  topHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  backIcon: {
-    fontSize: 24,
-    color: Colors.text,
-  },
-  headerTitle: {
-    ...Typography.h3,
-    color: Colors.text,
-  },
-  markAllRead: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.primary,
-  },
-  listContent: {
-    padding: Spacing.md,
-  },
-  notificationCard: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    marginBottom: Spacing.md,
-    ...Shadows.small,
-  },
-  notificationCardUnread: {
-    backgroundColor: Colors.primary + '05',
-    borderLeftWidth: 3,
-    borderLeftColor: Colors.primary,
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.md,
-  },
-  icon: {
-    fontSize: 24,
-  },
-  content: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  title: {
-    ...Typography.body,
-    fontWeight: '600',
-    color: Colors.text,
-    flex: 1,
-  },
-  titleUnread: {
-    fontWeight: 'bold',
-  },
-  unreadDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.primary,
-    marginLeft: Spacing.xs,
-  },
-  message: {
-    ...Typography.small,
-    color: Colors.textSecondary,
-    marginBottom: 4,
-  },
-  date: {
-    fontSize: 12,
-    color: Colors.textMuted,
-  },
-  deleteButton: {
-    padding: Spacing.xs,
-  },
-  deleteIcon: {
-    fontSize: 18,
-    color: Colors.textMuted,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  emptyIcon: {
-    fontSize: 80,
-    marginBottom: Spacing.lg,
-    opacity: 0.3,
-  },
-  emptyTitle: {
-    ...Typography.h3,
-    color: Colors.text,
-    marginBottom: Spacing.sm,
-  },
-  emptyText: {
-    ...Typography.body,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    paddingHorizontal: Spacing.xl,
-  },
-});
