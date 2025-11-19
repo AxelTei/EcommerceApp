@@ -12,6 +12,7 @@ import { HomeScreen } from '../screens/shop/HomeScreen';
 import { CartScreen } from '../screens/cart/CartScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
 import { useNotificationsStore } from '../stores/notificationsStore';
+import { useThemeStore } from '../stores/themeStore';
 
 
 const Stack = createNativeStackNavigator();
@@ -76,10 +77,12 @@ function AuthStack() {
 export function AppNavigator() {
   const { isAuthenticated, loadUser } = useAuthStore();
   const loadCart = useCartStore(state => state.loadCart);
+  const loadTheme = useThemeStore(state => state.loadTheme);
 
   useEffect(() => {
     loadUser();
     loadCart();
+    loadTheme();
   }, []);
 
   return (

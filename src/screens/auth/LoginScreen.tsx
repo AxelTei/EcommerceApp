@@ -13,19 +13,20 @@ import {
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
 import { loginSchema, LoginFormData } from '../../utils/validation';
 import { useAuthStore } from '../../stores/authStore';
-import { Colors, Spacing, Typography } from '../../config/theme';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
+import { useTheme } from '../../context/ThemeContext';
+import { Spacing, Typography } from '../../config/theme';
 
 export const LoginScreen: React.FC = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading } = useAuthStore();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const { colors: Colors } = useTheme();
 
   const {
     control,
@@ -42,11 +43,93 @@ export const LoginScreen: React.FC = () => {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login(data);
-      // Navigation sera gérée automatiquement plus tard
     } catch (error) {
       Alert.alert('Erreur', 'Email ou mot de passe incorrect');
     }
   };
+
+  // STYLES DYNAMIQUES À L'INTÉRIEUR DU COMPOSANT
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+    },
+    keyboardView: {
+      flex: 1,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      padding: Spacing.lg,
+    },
+    header: {
+      alignItems: 'center',
+      marginTop: Spacing.xl,
+      marginBottom: Spacing.xxl,
+    },
+    logo: {
+      fontSize: 60,
+      marginBottom: Spacing.md,
+    },
+    title: {
+      ...Typography.h1,
+      color: Colors.text,
+      marginBottom: Spacing.xs,
+    },
+    subtitle: {
+      ...Typography.body,
+      color: Colors.textSecondary,
+    },
+    form: {
+      marginBottom: Spacing.xl,
+    },
+    forgotPassword: {
+      alignSelf: 'flex-end',
+      marginBottom: Spacing.lg,
+    },
+    forgotPasswordText: {
+      ...Typography.small,
+      color: Colors.primary,
+      fontWeight: '600',
+    },
+    loginButton: {
+      marginTop: Spacing.md,
+    },
+    divider: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: Spacing.xl,
+    },
+    dividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: Colors.border,
+    },
+    dividerText: {
+      ...Typography.small,
+      color: Colors.textMuted,
+      marginHorizontal: Spacing.md,
+    },
+    socialButtons: {
+      marginBottom: Spacing.xl,
+    },
+    socialButton: {
+      marginTop: Spacing.md,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    footerText: {
+      ...Typography.body,
+      color: Colors.textSecondary,
+    },
+    signupLink: {
+      ...Typography.body,
+      color: Colors.primary,
+      fontWeight: '600',
+    },
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,14 +141,12 @@ export const LoginScreen: React.FC = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
           <View style={styles.header}>
             <Text style={styles.logo}>🛒</Text>
             <Text style={styles.title}>Bienvenue !</Text>
             <Text style={styles.subtitle}>Connectez-vous à votre compte</Text>
           </View>
 
-          {/* Form */}
           <View style={styles.form}>
             <Controller
               control={control}
@@ -117,14 +198,12 @@ export const LoginScreen: React.FC = () => {
             />
           </View>
 
-          {/* Divider */}
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
             <Text style={styles.dividerText}>OU</Text>
             <View style={styles.dividerLine} />
           </View>
 
-          {/* Social Login */}
           <View style={styles.socialButtons}>
             <Button
               title="Continuer avec Google"
@@ -139,7 +218,6 @@ export const LoginScreen: React.FC = () => {
             />
           </View>
 
-          {/* Signup Link */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Pas encore de compte ? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
@@ -151,85 +229,3 @@ export const LoginScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: Spacing.lg,
-  },
-  header: {
-    alignItems: 'center',
-    marginTop: Spacing.xl,
-    marginBottom: Spacing.xxl,
-  },
-  logo: {
-    fontSize: 60,
-    marginBottom: Spacing.md,
-  },
-  title: {
-    ...Typography.h1,
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
-  subtitle: {
-    ...Typography.body,
-    color: Colors.textSecondary,
-  },
-  form: {
-    marginBottom: Spacing.xl,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: Spacing.lg,
-  },
-  forgotPasswordText: {
-    ...Typography.small,
-    color: Colors.primary,
-    fontWeight: '600',
-  },
-  loginButton: {
-    marginTop: Spacing.md,
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: Spacing.xl,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.border,
-  },
-  dividerText: {
-    ...Typography.small,
-    color: Colors.textMuted,
-    marginHorizontal: Spacing.md,
-  },
-  socialButtons: {
-    marginBottom: Spacing.xl,
-  },
-  socialButton: {
-    marginTop: Spacing.md,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footerText: {
-    ...Typography.body,
-    color: Colors.textSecondary,
-  },
-  signupLink: {
-    ...Typography.body,
-    color: Colors.primary,
-    fontWeight: '600',
-  },
-});

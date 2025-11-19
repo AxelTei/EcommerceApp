@@ -1,41 +1,53 @@
 // src/config/theme.ts
 
-export const Colors = {
-  // Primary
-  primary: '#6366F1',      // Indigo moderne
+export const LightColors = {
+  primary: '#6366F1',
   primaryDark: '#4F46E5',
   primaryLight: '#818CF8',
   
-  // Accent
-  accent: '#EC4899',       // Rose
+  accent: '#EC4899',
   accentDark: '#DB2777',
   accentLight: '#F472B6',
   
-  // Neutral
   background: '#FFFFFF',
   surface: '#F9FAFB',
   border: '#E5E7EB',
   
-  // Text
   text: '#1F2937',
   textSecondary: '#6B7280',
   textMuted: '#9CA3AF',
   
-  // Status
   success: '#10B981',
   error: '#EF4444',
   warning: '#F59E0B',
   info: '#3B82F6',
-  
-  // Dark mode (on l'utilisera plus tard)
-  dark: {
-    background: '#111827',
-    surface: '#1F2937',
-    border: '#374151',
-    text: '#F9FAFB',
-    textSecondary: '#9CA3AF',
-  },
 };
+
+export const DarkColors = {
+  primary: '#818CF8',
+  primaryDark: '#6366F1',
+  primaryLight: '#A5B4FC',
+  
+  accent: '#F472B6',
+  accentDark: '#EC4899',
+  accentLight: '#F9A8D4',
+  
+  background: '#111827',
+  surface: '#1F2937',
+  border: '#374151',
+  
+  text: '#F9FAFB',
+  textSecondary: '#D1D5DB',
+  textMuted: '#9CA3AF',
+  
+  success: '#34D399',
+  error: '#F87171',
+  warning: '#FBBF24',
+  info: '#60A5FA',
+};
+
+// Garde l'ancien export pour la compatibilité
+export const Colors = LightColors;
 
 export const Spacing = {
   xs: 4,
@@ -110,3 +122,6 @@ export const Shadows = {
     elevation: 8,
   },
 };
+
+// Helper pour obtenir les couleurs selon le thème
+export const getColors = (isDark: boolean) => isDark ? DarkColors : LightColors;

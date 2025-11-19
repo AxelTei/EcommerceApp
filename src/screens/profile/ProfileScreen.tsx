@@ -13,19 +13,23 @@ import {
 } from 'react-native';
 import { useAuthStore } from '../../stores/authStore';
 import { OrdersScreen } from './OrdersScreen';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 import { FavoritesScreen } from './FavoritesScreen';
 import { ProductDetailScreen } from '../shop/ProductDetailScreen';
-import { Product } from '../../types';
 import { NotificationsScreen } from './NotificationsScreen';
+import { SettingsScreen } from './SettingScreen';
+import { Product } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
+import { Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 
 export const ProfileScreen: React.FC = () => {
   const { user, logout } = useAuthStore();
   const [ordersVisible, setOrdersVisible] = useState(false);
   const [favoritesVisible, setFavoritesVisible] = useState(false);
   const [detailVisible, setDetailVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [notificationsVisible, setNotificationsVisible] = useState(false);
+  const [settingsVisible, setSettingsVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const { colors: Colors } = useTheme();
 
   const menuItems = [
     { id: '1', icon: '📦', title: 'Mes commandes', subtitle: 'Historique et suivi' },
@@ -37,15 +41,158 @@ export const ProfileScreen: React.FC = () => {
     { id: '7', icon: '❓', title: 'Aide', subtitle: 'FAQ et support' },
   ];
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+    },
+    header: {
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+    },
+    headerTitle: {
+      ...Typography.h2,
+      color: Colors.text,
+    },
+    userCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: Colors.surface,
+      marginHorizontal: Spacing.lg,
+      marginBottom: Spacing.lg,
+      padding: Spacing.lg,
+      borderRadius: BorderRadius.lg,
+      ...Shadows.medium,
+    },
+    avatar: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: Colors.border,
+    },
+    userInfo: {
+      flex: 1,
+      marginLeft: Spacing.md,
+    },
+    userName: {
+      ...Typography.h3,
+      color: Colors.text,
+      marginBottom: 4,
+    },
+    userEmail: {
+      ...Typography.small,
+      color: Colors.textSecondary,
+    },
+    editButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: Colors.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    editIcon: {
+      fontSize: 18,
+    },
+    statsContainer: {
+      flexDirection: 'row',
+      backgroundColor: Colors.surface,
+      marginHorizontal: Spacing.lg,
+      marginBottom: Spacing.lg,
+      padding: Spacing.lg,
+      borderRadius: BorderRadius.lg,
+      ...Shadows.small,
+    },
+    statItem: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    statValue: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: Colors.primary,
+      marginBottom: 4,
+    },
+    statLabel: {
+      fontSize: 12,
+      color: Colors.textSecondary,
+    },
+    statDivider: {
+      width: 1,
+      backgroundColor: Colors.border,
+    },
+    menuContainer: {
+      backgroundColor: Colors.surface,
+      marginHorizontal: Spacing.lg,
+      marginBottom: Spacing.lg,
+      borderRadius: BorderRadius.lg,
+      overflow: 'hidden',
+      ...Shadows.small,
+    },
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: Spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: Colors.border,
+    },
+    menuIcon: {
+      fontSize: 24,
+      marginRight: Spacing.md,
+    },
+    menuContent: {
+      flex: 1,
+    },
+    menuTitle: {
+      ...Typography.body,
+      fontWeight: '600',
+      color: Colors.text,
+      marginBottom: 2,
+    },
+    menuSubtitle: {
+      ...Typography.small,
+      color: Colors.textSecondary,
+    },
+    menuArrow: {
+      fontSize: 24,
+      color: Colors.textMuted,
+    },
+    logoutButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: Colors.surface,
+      marginHorizontal: Spacing.lg,
+      marginBottom: Spacing.lg,
+      padding: Spacing.lg,
+      borderRadius: BorderRadius.lg,
+      borderWidth: 1,
+      borderColor: Colors.error,
+    },
+    logoutIcon: {
+      fontSize: 20,
+      marginRight: Spacing.sm,
+    },
+    logoutText: {
+      ...Typography.body,
+      fontWeight: '600',
+      color: Colors.error,
+    },
+    version: {
+      ...Typography.small,
+      color: Colors.textMuted,
+      textAlign: 'center',
+      marginBottom: Spacing.xl,
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Profil</Text>
         </View>
 
-        {/* User Info Card */}
         <View style={styles.userCard}>
           <Image 
             source={{ uri: user?.avatar }} 
@@ -62,7 +209,6 @@ export const ProfileScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Stats */}
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>12</Text>
@@ -80,7 +226,6 @@ export const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Menu Items */}
         <View style={styles.menuContainer}>
           {menuItems.map((item) => (
             <TouchableOpacity 
@@ -93,6 +238,8 @@ export const ProfileScreen: React.FC = () => {
                   setFavoritesVisible(true);
                 } else if (item.title === 'Notifications') {
                   setNotificationsVisible(true);
+                } else if (item.title === 'Paramètres') {
+                  setSettingsVisible(true);
                 } else {
                   Alert.alert('Bientôt disponible', `${item.title} sera disponible prochainement`);
                 }
@@ -108,17 +255,14 @@ export const ProfileScreen: React.FC = () => {
           ))}
         </View>
 
-        {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
           <Text style={styles.logoutIcon}>🚪</Text>
           <Text style={styles.logoutText}>Se déconnecter</Text>
         </TouchableOpacity>
 
-        {/* Version */}
         <Text style={styles.version}>Version 1.0.0</Text>
       </ScrollView>
 
-      {/* Orders Modal */}
       <Modal
         visible={ordersVisible}
         animationType="slide"
@@ -127,7 +271,6 @@ export const ProfileScreen: React.FC = () => {
         <OrdersScreen onBack={() => setOrdersVisible(false)} />
       </Modal>
 
-      {/* Favorites Modal */}
       <Modal
         visible={favoritesVisible}
         animationType="slide"
@@ -142,7 +285,6 @@ export const ProfileScreen: React.FC = () => {
         />
       </Modal>
 
-      {/* Product Detail Modal */}
       <Modal
         visible={detailVisible}
         animationType="slide"
@@ -156,7 +298,6 @@ export const ProfileScreen: React.FC = () => {
         )}
       </Modal>
 
-      {/* Notifications Modal - AJOUTE ICI */}
       <Modal
         visible={notificationsVisible}
         animationType="slide"
@@ -164,151 +305,14 @@ export const ProfileScreen: React.FC = () => {
       >
         <NotificationsScreen onBack={() => setNotificationsVisible(false)} />
       </Modal>
+
+      <Modal
+        visible={settingsVisible}
+        animationType="slide"
+        onRequestClose={() => setSettingsVisible(false)}
+      >
+        <SettingsScreen onBack={() => setSettingsVisible(false)} />
+      </Modal>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-  },
-  headerTitle: {
-    ...Typography.h2,
-    color: Colors.text,
-  },
-  userCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    ...Shadows.medium,
-  },
-  avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: Colors.surface,
-  },
-  userInfo: {
-    flex: 1,
-    marginLeft: Spacing.md,
-  },
-  userName: {
-    ...Typography.h3,
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  userEmail: {
-    ...Typography.small,
-    color: Colors.textSecondary,
-  },
-  editButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  editIcon: {
-    fontSize: 18,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    ...Shadows.small,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: Colors.primary,
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-  },
-  statDivider: {
-    width: 1,
-    backgroundColor: Colors.border,
-  },
-  menuContainer: {
-    backgroundColor: '#fff',
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    ...Shadows.small,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.surface,
-  },
-  menuIcon: {
-    fontSize: 24,
-    marginRight: Spacing.md,
-  },
-  menuContent: {
-    flex: 1,
-  },
-  menuTitle: {
-    ...Typography.body,
-    fontWeight: '600',
-    color: Colors.text,
-    marginBottom: 2,
-  },
-  menuSubtitle: {
-    ...Typography.small,
-    color: Colors.textSecondary,
-  },
-  menuArrow: {
-    fontSize: 24,
-    color: Colors.textMuted,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: Colors.error,
-  },
-  logoutIcon: {
-    fontSize: 20,
-    marginRight: Spacing.sm,
-  },
-  logoutText: {
-    ...Typography.body,
-    fontWeight: '600',
-    color: Colors.error,
-  },
-  version: {
-    ...Typography.small,
-    color: Colors.textMuted,
-    textAlign: 'center',
-    marginBottom: Spacing.xl,
-  },
-});

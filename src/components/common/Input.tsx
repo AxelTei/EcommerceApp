@@ -8,7 +8,8 @@ import {
   TextInputProps,
   TouchableOpacity,
 } from 'react-native';
-import { Colors, BorderRadius, Spacing, Typography } from '../../config/theme';
+import { useTheme } from '../../context/ThemeContext';
+import { BorderRadius, Spacing, Typography } from '../../config/theme';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -28,6 +29,52 @@ export const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const { colors: Colors } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      marginBottom: Spacing.md,
+    },
+    label: {
+      ...Typography.small,
+      fontWeight: '600',
+      color: Colors.text,
+      marginBottom: Spacing.xs,
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: Colors.surface,
+      borderWidth: 1,
+      borderColor: Colors.border,
+      borderRadius: BorderRadius.md,
+      paddingHorizontal: Spacing.md,
+    },
+    inputContainerFocused: {
+      borderColor: Colors.primary,
+      backgroundColor: Colors.background,
+    },
+    inputContainerError: {
+      borderColor: Colors.error,
+    },
+    input: {
+      flex: 1,
+      paddingVertical: Spacing.sm + 4,
+      fontSize: 16,
+      color: Colors.text,
+      backgroundColor: 'transparent',
+    },
+    icon: {
+      fontSize: 20,
+      color: Colors.textSecondary,
+      marginHorizontal: Spacing.xs,
+    },
+    error: {
+      ...Typography.small,
+      color: Colors.error,
+      marginTop: Spacing.xs,
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -45,7 +92,7 @@ export const Input: React.FC<InputProps> = ({
           placeholderTextColor={Colors.textMuted}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          autoComplete='off'
+          autoComplete="off"
           {...props}
         />
         
@@ -60,47 +107,3 @@ export const Input: React.FC<InputProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: Spacing.md,
-  },
-  label: {
-    ...Typography.small,
-    fontWeight: '600',
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.md,
-  },
-  inputContainerFocused: {
-    borderColor: Colors.primary,
-    backgroundColor: '#fff',
-  },
-  inputContainerError: {
-    borderColor: Colors.error,
-  },
-  input: {
-    flex: 1,
-    paddingVertical: Spacing.sm + 4,
-    fontSize: 16,
-    color: Colors.text,
-  },
-  icon: {
-    fontSize: 20,
-    color: Colors.textSecondary,
-    marginHorizontal: Spacing.xs,
-  },
-  error: {
-    ...Typography.small,
-    color: Colors.error,
-    marginTop: Spacing.xs,
-  },
-});

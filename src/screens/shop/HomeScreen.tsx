@@ -9,20 +9,23 @@ import {
   StyleSheet,
   SafeAreaView,
   TextInput,
+  Modal,
 } from 'react-native';
 import { mockProducts } from '../../utils/mockData';
 import { Product } from '../../types';
-import { Colors, Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 import { useCartStore } from '../../stores/cartStore';
-import { Modal } from 'react-native';
 import { ProductDetailScreen } from './ProductDetailScreen';
+import { useTheme } from '../../context/ThemeContext';
+import { Spacing, Typography, BorderRadius, Shadows } from '../../config/theme';
 
 export const HomeScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
+  
   const addItem = useCartStore(state => state.addItem);
+  const { colors: Colors } = useTheme();
 
   const categories = ['Tout', 'electronics', 'clothing', 'shoes', 'accessories'];
 
@@ -32,8 +35,173 @@ export const HomeScreen: React.FC = () => {
     return matchesSearch && matchesCategory;
   });
 
+  const getCategoryLabel = (cat: string) => {
+    const labels: Record<string, string> = {
+      'Tout': 'Tout',
+      'electronics': 'Électronique',
+      'clothing': 'Vêtements',
+      'shoes': 'Chaussures',
+      'accessories': 'Accessoires',
+    };
+    return labels[cat] || cat;
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.md,
+    },
+    headerTitle: {
+      ...Typography.h2,
+      color: Colors.text,
+    },
+    notificationIcon: {
+      fontSize: 24,
+    },
+    searchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: Colors.surface,
+      marginHorizontal: Spacing.lg,
+      marginBottom: Spacing.md,
+      paddingHorizontal: Spacing.md,
+      borderRadius: BorderRadius.md,
+    },
+    searchIcon: {
+      fontSize: 20,
+      marginRight: Spacing.sm,
+    },
+    searchInput: {
+      flex: 1,
+      paddingVertical: Spacing.sm + 4,
+      fontSize: 16,
+      color: Colors.text,
+    },
+    categoriesContainer: {
+      marginBottom: Spacing.md,
+    },
+    categoryChip: {
+      paddingHorizontal: Spacing.lg,
+      paddingVertical: Spacing.sm,
+      backgroundColor: Colors.surface,
+      borderRadius: BorderRadius.full,
+      marginLeft: Spacing.lg,
+    },
+    categoryChipActive: {
+      backgroundColor: Colors.primary,
+    },
+    categoryText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: Colors.textSecondary,
+    },
+    categoryTextActive: {
+      color: '#fff',
+    },
+    productsGrid: {
+      paddingHorizontal: Spacing.md,
+    },
+    productCard: {
+      flex: 1,
+      margin: Spacing.sm,
+      backgroundColor: Colors.surface,
+      borderRadius: BorderRadius.lg,
+      overflow: 'hidden',
+      ...Shadows.medium,
+    },
+    productImage: {
+      width: '100%',
+      height: 180,
+      backgroundColor: Colors.border,
+    },
+    outOfStockBadge: {
+      position: 'absolute',
+      top: Spacing.sm,
+      right: Spacing.sm,
+      backgroundColor: Colors.error,
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: 4,
+      borderRadius: BorderRadius.sm,
+    },
+    outOfStockText: {
+      color: '#fff',
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    productInfo: {
+      padding: Spacing.sm + 4,
+    },
+    productBrand: {
+      fontSize: 12,
+      color: Colors.textMuted,
+      textTransform: 'uppercase',
+      marginBottom: 4,
+    },
+    productName: {
+      ...Typography.small,
+      fontWeight: '600',
+      color: Colors.text,
+      marginBottom: Spacing.xs,
+    },
+    ratingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: Spacing.xs,
+    },
+    ratingText: {
+      fontSize: 12,
+      color: Colors.text,
+      marginRight: 4,
+    },
+    reviewsText: {
+      fontSize: 12,
+      color: Colors.textMuted,
+    },
+    priceContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: Spacing.xs,
+    },
+    price: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: Colors.primary,
+    },
+    addButton: {
+      width: 32,
+      height: 32,
+      backgroundColor: Colors.primary,
+      borderRadius: BorderRadius.full,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    addButtonText: {
+      color: '#fff',
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop: 60,
+    },
+    emptyText: {
+      ...Typography.body,
+      color: Colors.textMuted,
+    },
+  });
+
   const renderProduct = ({ item }: { item: Product }) => (
-    <TouchableOpacity
+    <TouchableOpacity 
       style={styles.productCard}
       onPress={() => {
         setSelectedProduct(item);
@@ -59,7 +227,10 @@ export const HomeScreen: React.FC = () => {
 
         <View style={styles.priceContainer}>
           <Text style={styles.price}>{item.price.toFixed(2)}€</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => {addItem(item, 1)}}>
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => addItem(item, 1)}
+          >
             <Text style={styles.addButtonText}>+</Text>
           </TouchableOpacity>
         </View>
@@ -67,20 +238,8 @@ export const HomeScreen: React.FC = () => {
     </TouchableOpacity>
   );
 
-  const getCategoryLabel = (cat: string) => {
-    const labels: Record<string, string> = {
-      'Tout': 'Tout',
-      'electronics': 'Électronique',
-      'clothing': 'Vêtements',
-      'shoes': 'Chaussures',
-      'accessories': 'Accessoires',
-    };
-    return labels[cat] || cat;
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Boutique</Text>
         <TouchableOpacity>
@@ -88,7 +247,6 @@ export const HomeScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Text style={styles.searchIcon}>🔍</Text>
         <TextInput
@@ -100,7 +258,6 @@ export const HomeScreen: React.FC = () => {
         />
       </View>
 
-      {/* Categories */}
       <View style={styles.categoriesContainer}>
         <FlatList
           horizontal
@@ -126,7 +283,6 @@ export const HomeScreen: React.FC = () => {
         />
       </View>
 
-      {/* Products Grid */}
       <FlatList
         data={filteredProducts}
         keyExtractor={(item) => item.id}
@@ -140,13 +296,14 @@ export const HomeScreen: React.FC = () => {
           </View>
         }
       />
+
       <Modal
         visible={detailVisible}
-        animationType='slide'
+        animationType="slide"
         onRequestClose={() => setDetailVisible(false)}
       >
         {selectedProduct && (
-          <ProductDetailScreen
+          <ProductDetailScreen 
             product={selectedProduct}
             onBack={() => setDetailVisible(false)}
           />
@@ -155,157 +312,3 @@ export const HomeScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-  },
-  headerTitle: {
-    ...Typography.h2,
-    color: Colors.text,
-  },
-  notificationIcon: {
-    fontSize: 24,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.surface,
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.md,
-    paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.md,
-  },
-  searchIcon: {
-    fontSize: 20,
-    marginRight: Spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-    paddingVertical: Spacing.sm + 4,
-    fontSize: 16,
-    color: Colors.text,
-  },
-  categoriesContainer: {
-    marginBottom: Spacing.md,
-  },
-  categoryChip: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.full,
-    marginLeft: Spacing.lg,
-  },
-  categoryChipActive: {
-    backgroundColor: Colors.primary,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-  },
-  categoryTextActive: {
-    color: '#fff',
-  },
-  productsGrid: {
-    paddingHorizontal: Spacing.md,
-  },
-  productCard: {
-    flex: 1,
-    margin: Spacing.sm,
-    backgroundColor: '#fff',
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    ...Shadows.medium,
-  },
-  productImage: {
-    width: '100%',
-    height: 180,
-    backgroundColor: Colors.surface,
-  },
-  outOfStockBadge: {
-    position: 'absolute',
-    top: Spacing.sm,
-    right: Spacing.sm,
-    backgroundColor: Colors.error,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
-  },
-  outOfStockText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  productInfo: {
-    padding: Spacing.sm + 4,
-  },
-  productBrand: {
-    fontSize: 12,
-    color: Colors.textMuted,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  productName: {
-    ...Typography.small,
-    fontWeight: '600',
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.xs,
-  },
-  ratingText: {
-    fontSize: 12,
-    color: Colors.text,
-    marginRight: 4,
-  },
-  reviewsText: {
-    fontSize: 12,
-    color: Colors.textMuted,
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: Spacing.xs,
-  },
-  price: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.primary,
-  },
-  addButton: {
-    width: 32,
-    height: 32,
-    backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  emptyText: {
-    ...Typography.body,
-    color: Colors.textMuted,
-  },
-});
