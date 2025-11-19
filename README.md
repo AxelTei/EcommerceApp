@@ -726,22 +726,6 @@ eas update --branch production --message "Bug fix"
 ❌ **Admin panel** : Pas de backoffice
 ❌ **Analytics** : Pas de tracking utilisateur
 
-### Estimation Développement Complet
-
-Pour transformer ce template en app commerciale :
-
-| Composant | Temps estimé | Coût estimé (freelance) |
-|-----------|--------------|------------------------|
-| Backend API | 3-4 semaines | 6K-10K€ |
-| Intégration paiements | 1-2 semaines | 2K-4K€ |
-| Sécurité & audit | 2-3 semaines | 4K-8K€ |
-| Tests complets | 2-3 semaines | 3K-6K€ |
-| Juridique (avocat) | N/A | 2K-5K€ |
-| Infrastructure (1 an) | N/A | 3K-10K€ |
-| **TOTAL** | **10-15 semaines** | **20K-43K€** |
-
-**Ce template vous fait gagner** : ~2-3 semaines de dev frontend mobile.
-
 ## 💡 Conseils pour Réussir votre Projet
 
 ### 1. **Commencez par le backend**
